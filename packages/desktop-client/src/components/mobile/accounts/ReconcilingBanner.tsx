@@ -14,6 +14,13 @@ import { useFormat } from '#hooks/useFormat';
 import { useSheetValue } from '#hooks/useSheetValue';
 import * as bindings from '#spreadsheet/bindings';
 
+function releaseActiveFocus() {
+  const activeElement = document.activeElement;
+  if (activeElement instanceof HTMLElement && activeElement !== document.body) {
+    activeElement.blur();
+  }
+}
+
 type ReconcilingBannerProps = {
   account: AccountEntity;
   targetBalance: number;
@@ -38,6 +45,9 @@ export function ReconcilingBanner({
   }
 
   const runAction = async (action: () => Promise<void>) => {
+    // On mobile Chrome, disabling or removing a focused control swallows
+    // the next tap, so release focus before this button updates.
+    releaseActiveFocus();
     setIsUpdating(true);
     try {
       await action();

@@ -151,6 +151,8 @@ function AccountHeader({ account }: { readonly account: AccountEntity }) {
           options: {
             accountId: account.id,
             onReconcile: (amount: number) => {
+              // Push a history entry so Back leaves reconciliation and stays
+              // on this account. Locking pops that entry; see onDoneReconciling.
               setSearchParams(prev => {
                 prev.set('reconcile', String(amount));
                 return prev;

@@ -86,5 +86,10 @@ test.describe('Mobile Accounts', () => {
 
     await accountPage.lockTransactions();
     await expect(accountPage.reconcilingBanner).not.toBeVisible();
+    await expect(page.getByRole('dialog')).toHaveCount(0);
+
+    await page.getByRole('button', { name: 'Back' }).click();
+    await expect(page).toHaveURL(/\/accounts$/);
+    await expect(page.getByLabel('Account list')).toBeVisible();
   });
 });
