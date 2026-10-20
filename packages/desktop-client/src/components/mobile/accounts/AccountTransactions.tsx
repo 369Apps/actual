@@ -73,7 +73,7 @@ function TransactionListWithPreviews({
   const [showRunningBalances] = useSyncedPref(`show-balances-${account.id}`);
   const [hideReconciled] = useSyncedPref(`hide-reconciled-${account.id}`);
 
-  const [searchParams, setSearchParams] = useSearchParams();
+  const [searchParams] = useSearchParams();
   const parsedReconcileAmount = parseInt(
     searchParams.get('reconcile') ?? '',
     10,
@@ -243,14 +243,11 @@ function TransactionListWithPreviews({
       },
     });
 
-    setSearchParams(
-      prev => {
-        prev.delete('reconcile');
-        return prev;
-      },
-      { replace: true },
-    );
-  }, [account, reconcileAmount, setSearchParams, updateAccount]);
+    // Drop the history entry added when reconciliation started. Replacing the
+    // search param instead leaves the account page on the stack twice, so the
+    // first Back tap stays on the account.
+    void navigate(-1);
+  }, [account, navigate, reconcileAmount, updateAccount]);
 
   const onCreateReconciliationTransaction = useCallback(
     async (targetDiff: number) => {
